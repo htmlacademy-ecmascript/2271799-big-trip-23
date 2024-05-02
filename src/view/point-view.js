@@ -46,7 +46,7 @@ function createPointTemplate() {
 </li>`;
 }
 
-export default class NewEventFormView {
+export default class PointView {
   getTemplate() {
     return createPointTemplate();
   }
@@ -55,6 +55,8 @@ export default class NewEventFormView {
     if(!this.element) {
       this.element = createElement(this.getTemplate());
     }
+
+    return this.element;
   }
 
   removeElement() {
