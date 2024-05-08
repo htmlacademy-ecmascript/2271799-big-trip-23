@@ -7,16 +7,19 @@ import NewEventFormView from '../view/new-event-form-view.js';
 export default class Presenter {
   pointListComponent = new PointListView();
 
-  constructor({container}) {
+  constructor({container, pointModel}) {
     this.container = container;
+    this.pointModel = pointModel;
   }
 
   init() {
+    const points = this.pointModel.getPoints();
+
     render(new SortListView(), this.container);
     render(this.pointListComponent, this.container);
     render(new NewEventFormView(), this.pointListComponent.getElement());
 
-    for (let i = 0; i < 3; i++) {
+    for (const point of points) {
       render(new PointView(), this.pointListComponent.getElement());
     }
   }
