@@ -14,13 +14,15 @@ export default class Presenter {
 
   init() {
     const points = this.pointModel.getPoints();
+    const destinations = this.pointModel.getDestinations();
+    const offers = this.pointModel.getOffers();
 
     render(new SortListView(), this.container);
     render(this.pointListComponent, this.container);
     render(new NewEventFormView(), this.pointListComponent.getElement());
 
     for (const point of points) {
-      render(new PointView(), this.pointListComponent.getElement());
+      render(new PointView({point: point, destinations: destinations, typeOffers: offers}), this.pointListComponent.getElement());
     }
   }
 }
