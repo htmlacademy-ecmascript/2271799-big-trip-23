@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 import { CITIES } from '../const';
 
 const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
@@ -106,20 +106,8 @@ function createNewEventTemplate() {
 </form>`;
 }
 
-export default class NewEventFormView {
-  getTemplate() {
+export default class NewEventFormView extends AbstractView {
+  get template() {
     return createNewEventTemplate();
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
