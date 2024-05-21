@@ -25,10 +25,16 @@ export default class Presenter {
     const offers = this.#offersModel.offers;
 
     render(new SortListView(), this.#container);
-    render(this.pointListComponent, this.#container);
+    render(this.#pointListComponent, this.#container);
 
     for (const point of points) {
-      render(new PointView({point: point, destinations: destinations, typeOffers: offers}), this.#pointListComponent.element);
+      this.#renderPoint(point, destinations, offers);
     }
+  }
+
+  #renderPoint(point, destinations, typeOffers) {
+    const pointComponent = new PointView({point, destinations, typeOffers});
+
+    render(pointComponent, this.#pointListComponent.element);
   }
 }
