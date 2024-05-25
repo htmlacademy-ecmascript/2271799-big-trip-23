@@ -63,8 +63,11 @@ import AbstractView from '../framework/view/abstract-view.js';
 // }
 
 function createPointEditView(point, destinations, typeOffers) {
-  const {basePrice, type, destination} = point;
+  const {basePrice, type, destination, offers} = point;
   const currentDestination = destinations.find((dest) => dest.id === destination);
+  const typeOffer = typeOffers.find((item) => item.type === type);
+  const checkedOffers = typeOffer.offers.filter((offer) => offers.includes(offer.id));
+  console.log(checkedOffers, 'dd')
 
   return `
   <form class="event event--edit" action="#" method="post">
@@ -82,7 +85,7 @@ function createPointEditView(point, destinations, typeOffers) {
 
           <div class="event__type-item">
             <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-            <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
+            <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
           </div>
 
         </fieldset>
@@ -91,9 +94,15 @@ function createPointEditView(point, destinations, typeOffers) {
 
     <div class="event__field-group  event__field-group--destination">
       <label class="event__label  event__type-output" for="event-destination-1">
-        Flight
+        ${type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination}" list="destination-list-1">
+      <input
+        class="event__input  event__input--destination"
+        id="event-destination-1"
+        type="text"
+        name="event-destination"
+        value="${currentDestination.name}"
+        list="destination-list-1">
       <datalist id="destination-list-1">
        ${destinations.map((dest) => `
        <option value='${dest.name}'></option>
@@ -129,9 +138,14 @@ function createPointEditView(point, destinations, typeOffers) {
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
       <div class="event__available-offers">
-      ${typeOffers.map((offer) => `
+      ${typeOffer.offers.map((offer) => `
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
+        <input
+        class="event__offer-checkbox visually-hidden"
+        id="event-offer-luggage-1"
+        type="checkbox"
+        name="event-offer-luggage"
+        ${checkedOffers.map((item) => item.id === offer.id).join(' ') ? 'checked' : ''}>
         <label class="event__offer-label" for="event-offer-luggage-1">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
