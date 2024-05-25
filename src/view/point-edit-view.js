@@ -67,8 +67,6 @@ function createPointEditView(point, destinations, typeOffers) {
   const currentDestination = destinations.find((dest) => dest.id === destination);
   const typeOffer = typeOffers.find((item) => item.type === type);
   const checkedOffers = typeOffer.offers.filter((offer) => offers.includes(offer.id));
-  console.log(checkedOffers, 'dd')
-
   return `
   <form class="event event--edit" action="#" method="post">
   <header class="event__header">
