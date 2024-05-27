@@ -3,6 +3,7 @@ import PointListView from '../view/point-list-view.js';
 import SortListView from '../view/sort-list-view.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
+import NoPointView from '../view/no-point-view.js';
 // import NewEventFormView from '../view/new-event-form-view.js';
 
 export default class Presenter {
@@ -35,7 +36,12 @@ export default class Presenter {
     for (const point of points) {
       this.#renderPoint(point, destinations, offers);
     }
+
+    if(this.#renderPoint.length === 0) {
+      render(new NoPointView(), this.#pointListComponent);
+    }
   }
+
 
   #renderPoint(point, destinations, typeOffers) {
     const escKeyDownHandler = (evt) => {
