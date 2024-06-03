@@ -3,15 +3,16 @@ import AbstractView from '../framework/view/abstract-view';
 const SORT_TYPES = ['Day', 'Event', 'Time', 'Price', 'Offers'];
 
 function createSortTypeTemplate(type) {
+  const lowercaseType = type.toLowerCase();
   return `
-  <div class="trip-sort__item  trip-sort__item--${type}">
+  <div class="trip-sort__item  trip-sort__item--${lowercaseType}">
     <input
-      id="sort-${type}"
+      id="sort-${lowercaseType}"
       class="trip-sort__input  visually-hidden"
       type="radio"
       name="trip-sort"
-      value="sort-${type}">
-    <label class="trip-sort__btn" for="sort-${type}">${type}</label>
+      value="sort-${lowercaseType}">
+    <label class="trip-sort__btn" for="sort-${lowercaseType}">${lowercaseType}</label>
   </div>`;
 }
 

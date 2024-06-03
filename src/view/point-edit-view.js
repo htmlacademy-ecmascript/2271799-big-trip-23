@@ -1,5 +1,7 @@
 // import dayjs from 'dayjs';
 import AbstractView from '../framework/view/abstract-view.js';
+import { TYPES } from '../const.js';
+import { capitalizeFirstLetter } from '../utils/common.js';
 // import { humanizePointDueDate, humanizePointDueTime } from '../utils';
 
 // function createPointTemplate(point, destinations, typeOffers) {
@@ -67,6 +69,7 @@ function createPointEditView(point, destinations, typeOffers) {
   const currentDestination = destinations.find((dest) => dest.id === destination);
   const typeOffer = typeOffers.find((item) => item.type === type);
   const checkedOffers = typeOffer.offers.filter((offer) => offers.includes(offer.id));
+
   return `
   <form class="event event--edit" action="#" method="post">
   <header class="event__header">
@@ -80,11 +83,16 @@ function createPointEditView(point, destinations, typeOffers) {
       <div class="event__type-list">
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
+          ${TYPES.map((item) => {
+    const capitalizedItem = capitalizeFirstLetter(item);
+    return `
+              <div class="event__type-item">
+                <input id="event-type-${item}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item}">
+                <label class="event__type-label  event__type-label--${item}" for="event-type-${item}-1">${capitalizedItem}</label>
+              </div>
+            `;
+  }).join('')}
 
-          <div class="event__type-item">
-            <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-            <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
-          </div>
 
         </fieldset>
       </div>
