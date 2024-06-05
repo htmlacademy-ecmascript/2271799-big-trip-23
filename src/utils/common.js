@@ -4,4 +4,8 @@ function getRandomArrayElement(items) {
 
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-export {getRandomArrayElement, capitalizeFirstLetter};
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
+
+export {getRandomArrayElement, capitalizeFirstLetter, updateItem};

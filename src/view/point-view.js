@@ -5,9 +5,9 @@ import { humanizePointDueDate, humanizePointDueTime } from '../utils/point.js';
 function createPointTemplate(point, destinations, typeOffers) {
   const {isFavorite, basePrice, type, destination, dateFrom, dateTo, offers} = point;
 
-  const currentDestination = destinations.find((dest) => dest.id === destination);
-  const typeOffer = typeOffers.find((item) => item.type === type);
-  const checkedOffers = typeOffer.offers.filter((offer) => offers.includes(offer.id));
+  const currentDestination = destinations ? destinations.find((dest) => dest.id === destination) : null;
+  const typeOffer = typeOffers ? typeOffers.find((item) => item.type === type) : null;
+  const checkedOffers = typeOffer ? typeOffer.offers.filter((offer) => offers.includes(offer.id)) : null;
 
   const startDate = dayjs(dateFrom);
   const endDate = dayjs(dateTo);
@@ -23,7 +23,7 @@ function createPointTemplate(point, destinations, typeOffers) {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${type} ${currentDestination.name}</h3>
+    <h3 class="event__title">${type} ${currentDestination ? currentDestination.name : ''}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time
@@ -41,13 +41,13 @@ function createPointTemplate(point, destinations, typeOffers) {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${checkedOffers.map((offer) =>
+      ${checkedOffers ? checkedOffers.map((offer) =>
     `<li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
       </li>`
-  ).join('')}
+  ).join('') : ''}
     </ul>
     <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
       <span class="visually-hidden">Add to favorite</span>
@@ -68,16 +68,20 @@ export default class PointView extends AbstractView {
   #typeOffers = null;
 
   #handleEditClick = null;
+  #handleFavoriteClick = null;
 
-  constructor({point, destinations, typeOffers, onEditClick}) {
+  constructor({point, destinations, typeOffers, onEditClick, onFavoriteClick}) {
     super();
     this.#point = point;
     this.#destinations = destinations;
     this.#typeOffers = typeOffers;
     this.#handleEditClick = onEditClick;
+    this.#handleFavoriteClick = onFavoriteClick;
 
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editClickHandle);
+    this.element.querySelector('.event__favorite-btn')
+      .addEventListener('click', this.#favoriteClickHandler);
   }
 
   get template() {
@@ -87,5 +91,10 @@ export default class PointView extends AbstractView {
   #editClickHandle = (evt) => {
     evt.preventDefault();
     this.#handleEditClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFavoriteClick();
   };
 }
