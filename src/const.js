@@ -8,4 +8,9 @@ const FilterType = {
   PAST: 'Past',
 };
 
-export {CITIES, TYPES, FilterType};
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+export {CITIES, TYPES, FilterType, Mode};
