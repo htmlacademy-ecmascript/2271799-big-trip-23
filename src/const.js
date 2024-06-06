@@ -1,5 +1,5 @@
 const CITIES = ['Chamonix', 'New York', 'Samara'];
-const TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const FilterType = {
   EVERYTHING: 'Everything',
@@ -8,4 +8,9 @@ const FilterType = {
   PAST: 'Past',
 };
 
-export {CITIES, TYPES, FilterType};
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+export {CITIES, TYPES, FilterType, Mode};

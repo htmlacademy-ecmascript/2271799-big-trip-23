@@ -1,72 +1,13 @@
-// import dayjs from 'dayjs';
 import AbstractView from '../framework/view/abstract-view.js';
-// import { humanizePointDueDate, humanizePointDueTime } from '../utils';
-
-// function createPointTemplate(point, destinations, typeOffers) {
-//   const {isFavorite, basePrice, type, destination, dateFrom, dateTo, offers} = point;
-
-//   const currentDestination = destinations.find((dest) => dest.id === destination);
-//   const typeOffer = typeOffers.find((item) => item.type === type);
-//   const checkedOffers = typeOffer.offers.filter((offer) => offers.includes(offer.id));
-
-//   const startDate = dayjs(dateFrom);
-//   const endDate = dayjs(dateTo);
-//   const diff = endDate.diff(startDate);
-//   const diffHours = Math.floor(diff / (1000 * 60 * 60));
-//   const diffMin = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-//   const diffDays = Math.ceil(diffHours / 24);
-
-//   return `
-//   <li class="trip-events__item">
-//   <div class="event">
-//     <time class="event__date" datetime="2019-03-18">${humanizePointDueDate(dateFrom)}</time>
-//     <div class="event__type">
-//       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
-//     </div>
-//     <h3 class="event__title">${type} ${currentDestination.name}</h3>
-//     <div class="event__schedule">
-//       <p class="event__time">
-//         <time
-//           class="event__start-time"
-//           datetime="${dateFrom}">${humanizePointDueTime(dateFrom)}</time>
-//         &mdash;
-//         <time
-//           class="event__end-time"
-//           datetime="${dateTo}">${humanizePointDueTime(dateTo)}</time>
-//       </p>
-//       <p class="event__duration">${diffDays}D ${diffHours}H ${diffMin}M</p>
-//     </div>
-//     <p class="event__price">
-//       &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
-//     </p>
-//     <h4 class="visually-hidden">Offers:</h4>
-//     <ul class="event__selected-offers">
-//       ${checkedOffers.map((offer) =>
-//     `<li class="event__offer">
-//         <span class="event__offer-title">${offer.title}</span>
-//         &plus;&euro;&nbsp;
-//         <span class="event__offer-price">${offer.price}</span>
-//       </li>`
-//   ).join('')}
-//     </ul>
-//     <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
-//       <span class="visually-hidden">Add to favorite</span>
-//       <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-//         <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
-//       </svg>
-//     </button>
-//     <button class="event__rollup-btn" type="button">
-//       <span class="visually-hidden">Open event</span>
-//     </button>
-//   </div>
-// </li>`;
-// }
+import { TYPES } from '../const.js';
+import { capitalizeFirstLetter } from '../utils/common.js';
 
 function createPointEditView(point, destinations, typeOffers) {
   const {basePrice, type, destination, offers} = point;
-  const currentDestination = destinations.find((dest) => dest.id === destination);
-  const typeOffer = typeOffers.find((item) => item.type === type);
-  const checkedOffers = typeOffer.offers.filter((offer) => offers.includes(offer.id));
+  const currentDestination = destinations ? destinations.find((dest) => dest.id === destination) : '';
+  const typeOffer = typeOffers ? typeOffers.find((item) => item.type === type) : '';
+  const checkedOffers = typeOffer ? typeOffer.offers.filter((offer) => offers.includes(offer.id)) : '';
+
   return `
   <form class="event event--edit" action="#" method="post">
   <header class="event__header">
@@ -80,11 +21,16 @@ function createPointEditView(point, destinations, typeOffers) {
       <div class="event__type-list">
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
+          ${TYPES.map((item) => {
+    const capitalizedItem = capitalizeFirstLetter(item);
+    return `
+              <div class="event__type-item">
+                <input id="event-type-${item}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item}">
+                <label class="event__type-label  event__type-label--${item}" for="event-type-${item}-1">${capitalizedItem}</label>
+              </div>
+            `;
+  }).join('')}
 
-          <div class="event__type-item">
-            <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-            <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
-          </div>
 
         </fieldset>
       </div>
@@ -102,9 +48,9 @@ function createPointEditView(point, destinations, typeOffers) {
         value="${currentDestination.name}"
         list="destination-list-1">
       <datalist id="destination-list-1">
-       ${destinations.map((dest) => `
+       ${destinations ? destinations.map((dest) => `
        <option value='${dest.name}'></option>
-       `)}
+       `) : ''}
 
       </datalist>
     </div>
@@ -136,7 +82,7 @@ function createPointEditView(point, destinations, typeOffers) {
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
       <div class="event__available-offers">
-      ${typeOffer.offers.map((offer) => `
+      ${typeOffer ? typeOffer.offers.map((offer) => `
       <div class="event__offer-selector">
         <input
         class="event__offer-checkbox visually-hidden"
@@ -149,7 +95,7 @@ function createPointEditView(point, destinations, typeOffers) {
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </label>
-      </div>`).join(' ')}
+      </div>`).join(' ') : ''}
       </div>
     </section>
 
@@ -160,33 +106,6 @@ function createPointEditView(point, destinations, typeOffers) {
   </section>
 </form>`;
 }
-// export default class PointEditView extends AbstractView {
-//   #point = null;
-//   #destinations = null;
-//   #typeOffers = null;
-
-//   #handleFormSubmit = null;
-
-//   constructor({point, destinations, typeOffers, onFormSubmit}) {
-//     super();
-//     this.#point = point;
-//     this.#destinations = destinations;
-//     this.#typeOffers = typeOffers;
-//     this.#handleFormSubmit = onFormSubmit;
-
-//     this.element.querySelector('form')
-//     .addEventListener('submit', this.#formSubmitHandler);
-//   }
-
-//   get template() {
-//     return createPointEditView(this.#point, this.#destinations, this.#typeOffers);
-//   }
-
-//   #formSubmitHandler = (evt) => {
-//     evt.preventDefault();
-//     this.#handleFormSubmit();
-//   };
-// }
 
 export default class PointEditView extends AbstractView {
   #point = null;
@@ -221,7 +140,7 @@ export default class PointEditView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#point);
   };
 
   #pointClickHandler = (evt) => {

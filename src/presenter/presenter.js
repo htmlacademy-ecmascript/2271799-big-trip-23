@@ -1,18 +1,25 @@
-import {render, replace} from '../framework/render.js';
+import {render} from '../framework/render.js';
 import PointListView from '../view/point-list-view.js';
 import SortListView from '../view/sort-list-view.js';
-import PointView from '../view/point-view.js';
-import PointEditView from '../view/point-edit-view.js';
 import NoPointView from '../view/no-point-view.js';
-// import NewEventFormView from '../view/new-event-form-view.js';
+import PointPresenter from './pointPresenter.js';
+import { updateItem } from '../utils/common.js';
 
 export default class Presenter {
   #pointListComponent = new PointListView();
+  #sortComponent = new SortListView();
+  #noPointComponent = new NoPointView();
 
   #container = null;
   #pointModel = null;
   #destinationsModel = null;
   #offersModel = null;
+  #destinations = null;
+  #offers = null;
+
+  #points = [];
+
+  #pointPresenters = new Map();
 
   constructor({container, pointModel, destinationsModel, offersModel}) {
     this.#container = container;
@@ -25,65 +32,56 @@ export default class Presenter {
     this.#renderBoard();
   }
 
-  #renderBoard() {
-    const points = this.#pointModel.points;
-    const destinations = this.#destinationsModel.destinations;
-    const offers = this.#offersModel.offers;
 
-    render(new SortListView(), this.#container);
+  #renderSort() {
+    render(this.#sortComponent, this.#container);
+  }
+
+  #renderPoint(point, destinations, typeOffers) {
+    const pointPresenter = new PointPresenter({
+      pointListContainer: this.#pointListComponent.element,
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange,
+    });
+
+    pointPresenter.init(point, destinations, typeOffers);
+    this.#pointPresenters.set(point.id, pointPresenter);
+  }
+
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  #renderNoPoint() {
+    render(new NoPointView(), this.#pointListComponent);
+  }
+
+  #clearPointList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+  }
+
+  #renderBoard() {
+    this.#points = this.#pointModel.points;
+    this.#destinations = this.#destinationsModel.destinations;
+    this.#offers = this.#offersModel.offers;
+
+    this.#renderSort();
     render(this.#pointListComponent, this.#container);
 
-    for (const point of points) {
-      this.#renderPoint(point, destinations, offers);
+    for (const point of this.#points) {
+      this.#renderPoint(point, this.#destinations, this.#offers);
     }
 
     if(this.#renderPoint.length === 0) {
-      render(new NoPointView(), this.#pointListComponent);
+      this.#renderNoPoint();
     }
   }
 
-
-  #renderPoint(point, destinations, typeOffers) {
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const pointComponent = new PointView({
-      point,
-      destinations,
-      typeOffers,
-      onEditClick: () => {
-        replacePointToForm();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
-    });
-
-    const pointEditComponent = new PointEditView({
-      point,
-      destinations,
-      typeOffers,
-      onFormSubmit: () => {
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-      onPointClick: () => {
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    });
-
-    function replacePointToForm() {
-      replace(pointEditComponent, pointComponent);
-    }
-
-    function replaceFormToPoint() {
-      replace(pointComponent, pointEditComponent);
-    }
-
-    render(pointComponent, this.#pointListComponent.element);
-  }
 }
+
