@@ -13,4 +13,12 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
-export {CITIES, TYPES, FilterType, Mode};
+const SortType = {
+  ALL: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
+};
+
+export {CITIES, TYPES, FilterType, Mode, SortType};

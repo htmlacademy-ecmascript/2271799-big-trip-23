@@ -1,30 +1,52 @@
 import AbstractView from '../framework/view/abstract-view';
+import { SortType } from '../const';
 
-const SORT_TYPES = ['Day', 'Event', 'Time', 'Price', 'Offers'];
+const DISABLES_SORT_TYPES = [SortType.EVENT, SortType.OFFERS];
 
-function createSortTypeTemplate(type) {
-  const lowercaseType = type.toLowerCase();
+function createSortListTemplate({currentSortType}) {
   return `
-  <div class="trip-sort__item  trip-sort__item--${lowercaseType}">
+  <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+  ${Object.values(SortType).map((sortType) => (
+    `<div class="trip-sort__item  trip-sort__item--${sortType}">
     <input
-      id="sort-${lowercaseType}"
+      id="sort-${sortType}"
       class="trip-sort__input  visually-hidden"
       type="radio"
       name="trip-sort"
-      value="sort-${lowercaseType}">
-    <label class="trip-sort__btn" for="sort-${lowercaseType}">${lowercaseType}</label>
-  </div>`;
-}
+      value="sort-${sortType}"
+      ${sortType === currentSortType ? 'checked' : ''}
+      ${DISABLES_SORT_TYPES.includes(sortType) ? 'disabled' : ''}>
+    <label data-sort-type=${sortType} class="trip-sort__btn" for="sort-${sortType}">${sortType}</label>
+  </div>`
+  )).join(' ')}
 
-function createSortListTemplate() {
-  return `
-  <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-    ${SORT_TYPES.map((type) => createSortTypeTemplate(type)).join('')}
   </form>`;
 }
 
 export default class SortListView extends AbstractView {
-  get template() {
-    return createSortListTemplate();
+  #handleSortTypeChange = null;
+  #activeSortType = null;
+
+  constructor({onSortTypeChange, currentSortType}) {
+    super();
+    this.#handleSortTypeChange = onSortTypeChange;
+    this.#activeSortType = currentSortType;
+
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
   }
+
+  get template() {
+    return createSortListTemplate({
+      currentSortType: this.#activeSortType,
+    });
+  }
+
+  #sortTypeChangeHandler = (evt) => {
+    if (evt.target.tagName !== 'LABEL') {
+      return;
+    }
+
+    evt.preventDefault();
+    this.#handleSortTypeChange(evt.target.dataset.sortType);
+  };
 }
