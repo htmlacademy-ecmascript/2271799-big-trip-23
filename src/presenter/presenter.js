@@ -1,13 +1,15 @@
-import {render} from '../framework/render.js';
+import {render, remove} from '../framework/render.js';
 import PointListView from '../view/point-list-view.js';
 import SortListView from '../view/sort-list-view.js';
 import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './pointPresenter.js';
 import { updateItem } from '../utils/common.js';
+import { sortPoints } from '../utils/sort.js';
+import { SortType } from '../const.js';
 
 export default class Presenter {
   #pointListComponent = new PointListView();
-  #sortComponent = new SortListView();
+  #sortComponent = null;
   #noPointComponent = new NoPointView();
 
   #container = null;
@@ -16,6 +18,8 @@ export default class Presenter {
   #offersModel = null;
   #destinations = null;
   #offers = null;
+
+  #activeSortButton = SortType.ALL;
 
   #points = [];
 
@@ -32,10 +36,36 @@ export default class Presenter {
     this.#renderBoard();
   }
 
-
   #renderSort() {
-    render(this.#sortComponent, this.#container);
+    if (this.#sortComponent !== null) {
+      remove(this.#sortComponent);
+    }
+
+    this.#sortComponent = new SortListView({
+      currentSortType: this.#activeSortButton,
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
+    render(this.#sortComponent, this.#container, 'afterbegin');
   }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#activeSortButton === sortType) {
+      return;
+    }
+    this.#activeSortButton = sortType;
+    this.#clearPointList();
+    this.#points = sortPoints(
+      this.#pointModel.points,
+      this.#activeSortButton
+    );
+
+    this.#renderSort();
+
+    this.#points.forEach((point) => {
+      this.#renderPoint(point, this.#destinations, this.#offers);
+    });
+  };
 
   #renderPoint(point, destinations, typeOffers) {
     const pointPresenter = new PointPresenter({
@@ -64,9 +94,11 @@ export default class Presenter {
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+    this.#pointListComponent.element.innerHTML = '';
   }
 
   #renderBoard() {
+    this.#clearPointList();
     this.#points = this.#pointModel.points;
     this.#destinations = this.#destinationsModel.destinations;
     this.#offers = this.#offersModel.offers;
@@ -74,14 +106,12 @@ export default class Presenter {
     this.#renderSort();
     render(this.#pointListComponent, this.#container);
 
-    for (const point of this.#points) {
-      this.#renderPoint(point, this.#destinations, this.#offers);
-    }
-
-    if(this.#renderPoint.length === 0) {
+    if(this.#points.length === 0) {
       this.#renderNoPoint();
+    } else {
+      this.#points.forEach((point) => {
+        this.#renderPoint(point, this.#destinations, this.#offers);
+      });
     }
   }
-
 }
-
