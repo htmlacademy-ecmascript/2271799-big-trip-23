@@ -5,7 +5,7 @@ import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './pointPresenter.js';
 import { updateItem } from '../utils/common.js';
 import { sortPoints } from '../utils/sort.js';
-import { SortType } from '../const.js';
+import { SortType, UpdateType, UserAction } from '../const.js';
 
 export default class Presenter {
   #pointListComponent = new PointListView();
@@ -30,7 +30,53 @@ export default class Presenter {
     this.#pointModel = pointModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+
+    this.#pointModel.addObserver(this.#handleModelEvent);
   }
+
+  get points() {
+    switch (this.#activeSortButton) {
+      case SortType.PRICE:
+        return sortPoints([...this.#pointModel.points], SortType.PRICE);
+      case SortType.TIME:
+        return sortPoints([...this.#pointModel.points], SortType.TIME);
+      case SortType.ALL:
+        return sortPoints([...this.#pointModel.points], SortType.ALL);
+    }
+    return this.#pointModel.points;
+  }
+
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointModel.deletePoint(updateType, update);
+        break;
+    }
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#pointPresenters.forEach((presenter) => presenter.destroy());
+        this.#pointPresenters.clear();
+
+        remove(this.#sortComponent);
+        remove(this.#noPointComponent);
+        this.#renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        break;
+    }
+  };
 
   init() {
     this.#renderBoard();
@@ -70,7 +116,7 @@ export default class Presenter {
   #renderPoint(point, destinations, typeOffers) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
 
