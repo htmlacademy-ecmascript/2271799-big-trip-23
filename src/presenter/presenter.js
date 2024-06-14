@@ -8,6 +8,7 @@ import { sortPoints } from '../utils/sort.js';
 import { FilterType, SortType, UpdateType, UserAction } from '../const.js';
 import { filter, getDifferenceInMinutes } from '../utils/filter.js';
 import dayjs from 'dayjs';
+import NewPointPresenter from './new-point-button-presenter.js';
 
 export default class Presenter {
   #pointListComponent = new PointListView();
@@ -28,15 +29,26 @@ export default class Presenter {
   #points = [];
 
   #pointPresenters = new Map();
+  #newPointPresenter = null;
 
-  constructor({container, pointModel, destinationsModel, offersModel, filterModel}) {
+  constructor({container, pointModel, destinationsModel, offersModel, filterModel, onNewPointDestroy}) {
     this.#container = container;
     this.#pointModel = pointModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#filterModel = filterModel;
 
+
+    this.#newPointPresenter = new NewPointPresenter({
+      pointListContainer: this.#pointListComponent,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewPointDestroy,
+      destinations: this.#destinations,
+      offers: this.#offers
+    });
+
     this.#pointModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   // get points() {
@@ -89,6 +101,7 @@ export default class Presenter {
         break;
     }
   };
+
 
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
@@ -155,6 +168,7 @@ export default class Presenter {
   }
 
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -174,6 +188,12 @@ export default class Presenter {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
     this.#pointListComponent.element.innerHTML = '';
+  }
+
+  createPoint() {
+    this.#newPointPresenter.init();
+    this.#activeSortButton = SortType.ALL;
+    this.#filterModel.set(UpdateType.MAJOR, FilterType.EVERYTHING);
   }
 
   #renderBoard() {
