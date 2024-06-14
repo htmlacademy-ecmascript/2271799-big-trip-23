@@ -1,7 +1,7 @@
 import { remove, render, replace } from '../framework/render';
 import PointEditView from '../view/point-edit-view';
 import PointView from '../view/point-view';
-import { Mode } from '../const';
+import { Mode, UpdateType, UserAction } from '../const';
 
 export default class PointPresenter {
   #pointListContainer = null;
@@ -44,6 +44,7 @@ export default class PointPresenter {
       typeOffers: this.#typeOffers,
       onFormSubmit: this.#handleFormSubmit,
       onPointClick: this.#handleCancelEdit,
+      onDeleteClick: this.#handleDeleteClick,
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -75,6 +76,14 @@ export default class PointPresenter {
     }
   }
 
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
+    );
+  };
+
   #replacePointToForm() {
     replace(this.#editPointComponent, this.#pointComponent);
     this.#handleModeChange();
@@ -96,7 +105,10 @@ export default class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
   #handleEditClick = () => {
@@ -105,7 +117,11 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (point) => {
-    this.#handleDataChange(point);
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point
+    );
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
