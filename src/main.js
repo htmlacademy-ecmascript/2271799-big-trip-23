@@ -20,7 +20,6 @@ const pointModel = new PointModel({
 const destinationsModel = new DestinationModel();
 const offersModel = new OffersModel();
 const filterModel = new FilterModel();
-pointModel.init();
 
 const filterPresenter = new FilterPresenter({
   filterContainer: filterElement,
@@ -53,3 +52,4 @@ function handleNewPointFormClose() {
 render(newPointButtonComponent, headerElement);
 presenter.init();
 filterPresenter.init();
+pointModel.init();
