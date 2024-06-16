@@ -16,7 +16,7 @@ export default class Presenter {
   #noPointComponent = null;
 
   #container = null;
-  #pointModel = null;
+  // #pointModel = null;
   #destinationsModel = null;
   #offersModel = null;
   #destinations = null;
@@ -33,7 +33,7 @@ export default class Presenter {
 
   constructor({container, pointModel, destinationsModel, offersModel, filterModel, onNewPointDestroy}) {
     this.#container = container;
-    this.#pointModel = pointModel;
+    this.#points = pointModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#filterModel = filterModel;
@@ -47,21 +47,9 @@ export default class Presenter {
       offers: this.#offers
     });
 
-    this.#pointModel.addObserver(this.#handleModelEvent);
+    this.#points.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
-
-  // get points() {
-  //   switch (this.#activeSortButton) {
-  //     case SortType.PRICE:
-  //       return sortPoints([...this.#pointModel.points], SortType.PRICE);
-  //     case SortType.TIME:
-  //       return sortPoints([...this.#pointModel.points], SortType.TIME);
-  //     case SortType.ALL:
-  //       return sortPoints([...this.#pointModel.points], SortType.ALL);
-  //   }
-  //   return this.#pointModel.points;
-  // }
 
   get points() {
     this.#filterType = this.#filterModel.filter;
@@ -91,13 +79,13 @@ export default class Presenter {
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointModel.updatePoint(updateType, update);
+        this.#points.updatePoint(updateType, update);
         break;
       case UserAction.ADD_POINT:
-        this.#pointModel.addPoint(updateType, update);
+        this.#points.addPoint(updateType, update);
         break;
       case UserAction.DELETE_POINT:
-        this.#pointModel.deletePoint(updateType, update);
+        this.#points.deletePoint(updateType, update);
         break;
     }
   };
@@ -145,7 +133,7 @@ export default class Presenter {
     this.#activeSortButton = sortType;
     this.#clearPointList();
     this.#points = sortPoints(
-      this.#pointModel.points,
+      this.#points.points,
       this.#activeSortButton
     );
 
@@ -198,19 +186,21 @@ export default class Presenter {
 
   #renderBoard() {
     this.#clearPointList();
-    this.#points = this.#pointModel.points;
+    // this.#points = this.#points.points;
     this.#destinations = this.#destinationsModel.destinations;
     this.#offers = this.#offersModel.offers;
 
     this.#renderSort();
     render(this.#pointListComponent, this.#container);
 
-    if(this.#points.length === 0) {
-      this.#renderNoPoint();
-    } else {
-      this.#points.forEach((point) => {
-        this.#renderPoint(point, this.#destinations, this.#offers);
-      });
-    }
+    // if(this.#points.length === 0) {
+    //   this.#renderNoPoint();
+    // } else {
+    console.log(this.#points.points)
+
+    this.#points.points.forEach((point) => {
+      this.#renderPoint(point, this.#destinations, this.#offers);
+    });
+    // }
   }
 }

@@ -12,6 +12,7 @@ function getDifferenceInMinutes(start, end) {
   return dayjs(end).diff(dayjs(start), 'minute');
 }
 
+
 function isPointFuture(point) {
   return dayjs().isBefore(point.dateFrom);
 }
