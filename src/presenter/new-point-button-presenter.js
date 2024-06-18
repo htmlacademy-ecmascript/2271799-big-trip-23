@@ -25,11 +25,16 @@ export default class NewPointPresenter {
       typeOffers: this.#pointsModel.getOffersByType(this.#point.type),
       onFormSubmit: this.#handleFormSubmit,
       onPointClick: this.#handleDeleteClick,
-      onDeleteClick: this.#onDeleteClick,
+      onDeleteClick: this.#handleCancelClick,
     });
 
     render(this.#pointEditComponent, this.#pointListContainer.element, RenderPosition.AFTERBEGIN);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
   }
+
+  #handleCancelClick = () => {
+    this.destroy();
+  };
 
   destroy() {
     if (this.#pointEditComponent === null) {
@@ -67,10 +72,10 @@ export default class NewPointPresenter {
   #handleFormSubmit = (point) => {
     this.#handleDataChange(
       UserAction.ADD_POINT,
-      UpdateType.MINOR,
+      UpdateType.MAJOR,
       point,
     );
-    this.destroy();
+    // this.destroy();
   };
 
   #handleDeleteClick = () => {

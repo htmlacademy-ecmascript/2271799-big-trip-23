@@ -49,4 +49,11 @@ const BLANK_POINT = {
   type: 'flight',
 };
 
-export {CITIES, TYPES, FilterType, Mode, SortType, UserAction, UpdateType, TimeLimit, BLANK_POINT};
+const setButtonName = (id, isDeleting) => {
+  if (!id) {
+    return 'Cancel';
+  }
+  return isDeleting ? 'Deleting...' : 'Delete';
+};
+
+export {setButtonName, CITIES, TYPES, FilterType, Mode, SortType, UserAction, UpdateType, TimeLimit, BLANK_POINT};
