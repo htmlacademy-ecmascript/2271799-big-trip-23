@@ -1,7 +1,5 @@
 import Presenter from './presenter/presenter.js';
 import PointModel from './model/point-model.js';
-import DestinationModel from './model/destination-model.js';
-import OffersModel from './model/offers-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import NewPointButton from './view/new-point-button.js';
@@ -17,8 +15,6 @@ const mainElement = document.querySelector('.trip-events');
 const pointModel = new PointModel({
   pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
 });
-const destinationsModel = new DestinationModel();
-const offersModel = new OffersModel();
 const filterModel = new FilterModel();
 
 const filterPresenter = new FilterPresenter({
@@ -26,12 +22,10 @@ const filterPresenter = new FilterPresenter({
   filterModel,
   pointsModel: pointModel,
 });
-console.log(pointModel, 'main');
+
 const presenter = new Presenter({
   container: mainElement,
   pointModel,
-  destinationsModel,
-  offersModel,
   filterModel,
   onNewPointDestroy: handleNewPointFormClose,
 });
@@ -49,7 +43,13 @@ function handleNewPointFormClose() {
   newPointButtonComponent.element.disabled = false;
 }
 
-render(newPointButtonComponent, headerElement);
-presenter.init();
 filterPresenter.init();
-pointModel.init();
+
+async function init() {
+  await pointModel.init().finally(() => {
+    render(newPointButtonComponent, headerElement);
+  });
+  presenter.init();
+}
+
+init();

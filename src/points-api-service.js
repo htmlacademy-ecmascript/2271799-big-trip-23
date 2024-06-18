@@ -50,6 +50,7 @@ export default class PointsApiService extends ApiService {
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
+
     return parsedResponse;
   }
 
@@ -62,13 +63,16 @@ export default class PointsApiService extends ApiService {
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
+
     return parsedResponse;
   }
 
   async deletePoint(point) {
-    await this._load({
+    const response = await this._load({
       url: `points/${point.id}`,
       method: Method.DELETE,
     });
+
+    return response;
   }
 }
