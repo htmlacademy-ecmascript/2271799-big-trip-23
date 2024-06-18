@@ -1,6 +1,12 @@
 import dayjs from 'dayjs';
 import { FilterType } from '../const';
 
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+
 // const filter = {
 //   [FilterType.EVERYTHING]: (points) => points,
 //   [FilterType.FUTURE]: (points) => points.filter((point) => dayjs(point.dateFrom).isAfter(dayjs())),
@@ -12,23 +18,23 @@ function getDifferenceInMinutes(start, end) {
   return dayjs(end).diff(dayjs(start), 'minute');
 }
 
-function isPointFuture(point) {
-  return dayjs().isBefore(point.dateFrom);
-}
+const TimeInMilliseconds = {
+  HOUR: 3600000,
+  DAY: 86400000,
+};
 
-function isPointPast(point) {
-  return dayjs().isAfter(point.dateTo);
-}
+const isEventOver = (dueDate) => dueDate && dayjs(dueDate).isBefore(dayjs(new Date() - TimeInMilliseconds.DAY));
 
-function isPointPresent(point) {
-  return dayjs().isBefore(point.dateTo) && dayjs().isAfter(point.dateFrom);
-}
+const isFutureEvent = (dueDate) => dueDate && dayjs(dueDate).isAfter(dayjs(new Date() + TimeInMilliseconds.DAY));
+
+const isPresentEvent = (dateFrom, dateTo) => dayjs(dateFrom).isSameOrBefore(dayjs(), 'D') && dayjs(dateTo).isSameOrAfter(dayjs(), 'D');
+
 
 const filter = {
-  [FilterType.EVERYTHING]: (points) => [...points],
-  [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point)),
-  [FilterType.PRESENT]: (points) => points.filter((point) => isPointPresent(point)),
-  [FilterType.PAST]: (points) => points.filter((point) => isPointPast(point)),
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isFutureEvent(point.dateFrom)),
+  [FilterType.PAST]: (points) => points.filter((point) => isEventOver(point.dateTo)),
+  [FilterType.PRESENT]: (points) => points.filter((point) => isPresentEvent(point.dateFrom, point.dateTo)),
 };
 
 export {filter, getDifferenceInMinutes};

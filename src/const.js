@@ -31,6 +31,29 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
-export {CITIES, TYPES, FilterType, Mode, SortType, UserAction, UpdateType};
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+const BLANK_POINT = {
+  basePrice: '0',
+  dateFrom: null,
+  dateTo: null,
+  destination: '',
+  isFavorite: false,
+  offers: [],
+  type: 'flight',
+};
+
+const setButtonName = (id, isDeleting) => {
+  if (!id) {
+    return 'Cancel';
+  }
+  return isDeleting ? 'Deleting...' : 'Delete';
+};
+
+export {setButtonName, CITIES, TYPES, FilterType, Mode, SortType, UserAction, UpdateType, TimeLimit, BLANK_POINT};

@@ -17,13 +17,15 @@ export default class PointPresenter {
 
   #mode = Mode.DEFAULT;
 
+  #pointModel = null;
+
   constructor({pointListContainer, onDataChange, onModeChange}) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
 
-  init(point, destinations, typeOffers) {
+  init(point, destinations, typeOffers, pointModel) {
     this.#point = point;
     this.#destinations = destinations;
     this.#typeOffers = typeOffers;
@@ -41,7 +43,7 @@ export default class PointPresenter {
     this.#editPointComponent = new PointEditView({
       point: this.#point,
       destinations: this.#destinations,
-      typeOffers: this.#typeOffers,
+      typeOffers: pointModel.getOffersByType(this.#point.type),
       onFormSubmit: this.#handleFormSubmit,
       onPointClick: this.#handleCancelEdit,
       onDeleteClick: this.#handleDeleteClick,
@@ -57,7 +59,8 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#editPointComponent, prevPointEditComponent);
+      replace(this.#pointComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -122,11 +125,46 @@ export default class PointPresenter {
       UpdateType.MINOR,
       point
     );
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleCancelEdit = () => {
     this.#replaceFormToPoint();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editPointComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editPointComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#editPointComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#editPointComponent.shake(resetFormState);
+  }
+
 }

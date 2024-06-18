@@ -1,8 +1,8 @@
 import Observable from '../framework/observable';
-import { SortType } from '../const';
+import { FilterType } from '../const';
 
 export default class FilterModel extends Observable {
-  #filter = SortType.ALL;
+  #filter = FilterType.EVERYTHING;
 
   get filter() {
     return this.#filter;
