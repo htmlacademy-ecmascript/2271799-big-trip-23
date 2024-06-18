@@ -22,7 +22,7 @@ export default class NewPointPresenter {
     this.#pointEditComponent = new PointEditView({
       point: this.#point,
       destinations: this.#pointsModel.destinations,
-      typeOffers: this.#pointsModel.getOffersByType(this.#point.type),
+      typeOffers: this.#pointsModel,
       onFormSubmit: this.#handleFormSubmit,
       onPointClick: this.#handleDeleteClick,
       onDeleteClick: this.#handleCancelClick,
@@ -38,7 +38,6 @@ export default class NewPointPresenter {
 
   destroy() {
     if (this.#pointEditComponent === null) {
-      // eslint-disable-next-line no-useless-return
       return;
     }
 

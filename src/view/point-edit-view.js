@@ -3,11 +3,18 @@ import { TYPES } from '../const.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import { setButtonName } from '../const.js';
+
+const setButtonName = (id, isDeleting) => {
+  if (!id) {
+    return 'Cancel';
+  }
+  return isDeleting ? 'Deleting...' : 'Delete';
+};
 
 function createPointEditView(state, destinations, typeOffers) {
   const {point} = state;
   const {basePrice, type, destination, offers, isSaving, isDeleting, id} = point;
+  const typeOffer = typeOffers ? typeOffers.offers.find((item) => item.type === type) : '';
   const currentDestination = destinations ? destinations.find((dest) => dest.id === destination) : '';
   const checkedOffers = typeOffers.offers ? typeOffers.offers.filter((offer) => offers.includes(offer.id)) : '';
 
@@ -81,11 +88,11 @@ function createPointEditView(state, destinations, typeOffers) {
   </header>
 
   <section class="event__details">
-  ${typeOffers.offers.length > 0 ? `
+  ${typeOffer.offers.length !== 0 ? `
   <section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       <div class="event__available-offers">
-      ${typeOffers ? typeOffers.offers.map((offer) => `
+      ${typeOffers ? typeOffer.offers.map((offer) => `
       <div class="event__offer-selector">
         <input
         class="event__offer-checkbox visually-hidden"
@@ -133,14 +140,12 @@ export default class PointEditView extends AbstractStatefulView {
   #datepickerFrom = null;
   #datepickerTo = null;
 
-  #offersById = [];
 
-  constructor({point, destinations, offersById, typeOffers, onFormSubmit, onPointClick, onDeleteClick}) {
+  constructor({point, destinations, typeOffers, onFormSubmit, onPointClick, onDeleteClick}) {
     super();
     this._state = point;
     this._setState(PointEditView.parsePointToState({point}));
     this.#destinations = destinations;
-    this.#offersById = offersById;
     this.#typeOffers = typeOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handlePointClick = onPointClick;
@@ -195,13 +200,15 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   #typeChangeHandler = (evt) => {
-    this.updateElement({
+    const newType = evt.target.value;
+
+    this._setState({
       point: {
         ...this._state.point,
-        type: evt.target.value,
-        typeOffers: this.#offersById
+        type: newType,
       },
     });
+    this.updateElement(this._state);
   };
 
   #destinationChangeHandler = (evt) => {
@@ -226,7 +233,7 @@ export default class PointEditView extends AbstractStatefulView {
         offers: checkedOffersById
       }
     });
-    this.updateElement();
+    // this.updateElement();
   };
 
   #priceChangeHandler = (evt) => {
