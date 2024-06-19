@@ -43,7 +43,7 @@ export default class PointPresenter {
     this.#editPointComponent = new PointEditView({
       point: this.#point,
       destinations: this.#destinations,
-      typeOffers: pointModel.getOffersByType(this.#point.type),
+      typeOffers: pointModel,
       onFormSubmit: this.#handleFormSubmit,
       onPointClick: this.#handleCancelEdit,
       onDeleteClick: this.#handleDeleteClick,
@@ -150,21 +150,21 @@ export default class PointPresenter {
     }
   }
 
-  setAborting() {
-    if (this.#mode === Mode.DEFAULT) {
-      this.#pointComponent.shake();
-      return;
-    }
+  // setAborting() {
+  //   if (this.#mode === Mode.DEFAULT) {
+  //     this.#pointComponent.shake();
+  //     return;
+  //   }
 
-    const resetFormState = () => {
-      this.#editPointComponent.updateElement({
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false,
-      });
-    };
+  //   const resetFormState = () => {
+  //     this.#editPointComponent.updateElement({
+  //       // isDisabled: false,
+  //       isSaving: false,
+  //       isDeleting: false,
+  //     });
+  //   };
 
-    this.#editPointComponent.shake(resetFormState);
-  }
+  //   this.#editPointComponent.shake(resetFormState);
+  // }
 
 }

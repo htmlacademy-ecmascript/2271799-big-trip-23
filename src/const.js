@@ -1,6 +1,21 @@
 const CITIES = ['Chamonix', 'New York', 'Samara'];
 const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+const BLANK_POINT = {
+  basePrice: '0',
+  dateFrom: null,
+  dateTo: null,
+  destination: '',
+  isFavorite: false,
+  offers: [],
+  type: 'flight',
+};
+
 const FilterType = {
   EVERYTHING: 'Everything',
   FUTURE: 'Future',
@@ -34,26 +49,4 @@ const UpdateType = {
   INIT: 'INIT'
 };
 
-const TimeLimit = {
-  LOWER_LIMIT: 350,
-  UPPER_LIMIT: 1000,
-};
-
-const BLANK_POINT = {
-  basePrice: '0',
-  dateFrom: null,
-  dateTo: null,
-  destination: '',
-  isFavorite: false,
-  offers: [],
-  type: 'flight',
-};
-
-const setButtonName = (id, isDeleting) => {
-  if (!id) {
-    return 'Cancel';
-  }
-  return isDeleting ? 'Deleting...' : 'Delete';
-};
-
-export {setButtonName, CITIES, TYPES, FilterType, Mode, SortType, UserAction, UpdateType, TimeLimit, BLANK_POINT};
+export {CITIES, TYPES, FilterType, Mode, SortType, UserAction, UpdateType, TimeLimit, BLANK_POINT};
