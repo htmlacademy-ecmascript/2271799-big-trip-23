@@ -17,8 +17,6 @@ export default class Presenter {
   #noPointComponent = null;
 
   #container = null;
-  #destinations = null;
-  #offers = null;
   #filterModel = null;
 
   #filterType = FilterType.EVERYTHING;
@@ -28,7 +26,6 @@ export default class Presenter {
     lowerLimit: TimeLimit.LOWER_LIMIT,
     upperLimit: TimeLimit.UPPER_LIMIT
   });
-
 
   #points = [];
 
@@ -78,7 +75,7 @@ export default class Presenter {
         try {
           await this.#points.updatePoint(updateType, update);
         } catch(err) {
-          this.#pointPresenters.get(update.id).setAborting();
+          this.#pointPresenters.get(update.id);
         }
         break;
       case UserAction.ADD_POINT:
@@ -86,7 +83,7 @@ export default class Presenter {
         try {
           await this.#points.addPoint(updateType, update);
         } catch(err) {
-          this.#newPointPresenter.setAborting();
+          this.#newPointPresenter();
         }
         break;
       case UserAction.DELETE_POINT:
@@ -94,7 +91,7 @@ export default class Presenter {
         try {
           await this.#points.deletePoint(updateType, update);
         } catch(err) {
-          this.#pointPresenters.get(update.id).setAborting();
+          this.#pointPresenters.get(update.id);
         }
         break;
     }
@@ -120,7 +117,7 @@ export default class Presenter {
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
-        remove(this.#loadingComponent);
+        remove(this.#noPointComponent);
         this.#renderBoard();
         break;
     }
@@ -178,27 +175,23 @@ export default class Presenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  // #handlePointChange = (updatedPoint) => {
-  // this.#points = updateItem(this.#points, updatedPoint);
-  //   this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  // };
-
   #renderLoading() {
-    render(this.#loadingComponent, this.#pointListComponent, RenderPosition.AFTERBEGIN);
+    render(this.#loadingComponent, this.#container, RenderPosition.AFTERBEGIN);
   }
 
   #renderNoPoint() {
     this.#noPointComponent = new NoPointView({
       filterType: this.#filterType
     });
-    render(new NoPointView(), this.#pointListComponent, RenderPosition.AFTERBEGIN);
+    render(this.#noPointComponent, this.#container);
   }
 
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
     this.#pointListComponent.element.innerHTML = '';
-    // remove(this.#loadingComponent);
+    remove(this.#loadingComponent);
+    remove(this.#noPointComponent);
   }
 
   #renderBoard() {

@@ -16,7 +16,7 @@ function createPointEditView(state, destinations, typeOffers) {
   const {basePrice, type, destination, offers, isSaving, isDeleting, id} = point;
   const typeOffer = typeOffers ? typeOffers.offers.find((item) => item.type === type) : '';
   const currentDestination = destinations ? destinations.find((dest) => dest.id === destination) : '';
-  const checkedOffers = typeOffers.offers ? typeOffers.offers.filter((offer) => offers.includes(offer.id)) : '';
+  const checkedOffers = typeOffer.offers ? typeOffer.offers.filter((offer) => offers.includes(offer.id)) : '';
 
   return `
   <li class="trip-events__item">
@@ -224,16 +224,13 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   #offerChangeHandler = () => {
-    const checkedOffersElement = this.element.querySelectorAll('.event__offer-checkbox:checked');
-    const checkedOffersById = Array.from(checkedOffersElement).map((item) => Number(item.dataset.offerId));
-
+    const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
     this._setState({
       point: {
         ...this._state.point,
-        offers: checkedOffersById
+        offers: checkedBoxes.map((element) => element.dataset.offerId)
       }
     });
-    // this.updateElement();
   };
 
   #priceChangeHandler = (evt) => {
