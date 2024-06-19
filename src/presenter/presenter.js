@@ -75,7 +75,7 @@ export default class Presenter {
         try {
           await this.#points.updatePoint(updateType, update);
         } catch(err) {
-          this.#pointPresenters.get(update.id);
+          this.#pointPresenters.get(update.id).setAborting();
         }
         break;
       case UserAction.ADD_POINT:

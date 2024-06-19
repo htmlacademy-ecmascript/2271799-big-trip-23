@@ -150,4 +150,7 @@ export default class PointPresenter {
     }
   }
 
+  setAborting() {
+    this.#editPointComponent.shake();
+  }
 }
