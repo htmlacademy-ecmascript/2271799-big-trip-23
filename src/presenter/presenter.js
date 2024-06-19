@@ -83,7 +83,7 @@ export default class Presenter {
         try {
           await this.#points.addPoint(updateType, update);
         } catch(err) {
-          this.#newPointPresenter();
+          this.#newPointPresenter.setAborting();
         }
         break;
       case UserAction.DELETE_POINT:
@@ -204,6 +204,7 @@ export default class Presenter {
         break;
       case UpdateType.MAJOR:
         this.#clearPointList();
+        this.#activeSortButton = SortType.ALL;
         this.#renderBoard();
         break;
       case UpdateType.INIT:

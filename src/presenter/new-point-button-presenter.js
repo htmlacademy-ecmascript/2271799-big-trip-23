@@ -57,15 +57,7 @@ export default class NewPointPresenter {
   }
 
   setAborting() {
-    const resetFormState = () => {
-      this.#pointEditComponent.updateElement({
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false,
-      });
-    };
-
-    this.#pointEditComponent.shake(resetFormState);
+    this.#pointEditComponent.shake();
   }
 
   #handleFormSubmit = (point) => {
@@ -74,7 +66,6 @@ export default class NewPointPresenter {
       UpdateType.MAJOR,
       point,
     );
-    this.destroy();
   };
 
   #handleDeleteClick = () => {
