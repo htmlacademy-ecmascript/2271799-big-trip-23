@@ -3,6 +3,7 @@ import { TYPES } from '../const.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { humanizePointDueDate } from '../utils/point.js';
 
 const setButtonName = (id, isDeleting) => {
   if (!id) {
@@ -13,7 +14,7 @@ const setButtonName = (id, isDeleting) => {
 
 function createPointEditView(state, destinations, typeOffers) {
   const {point} = state;
-  const {basePrice, type, destination, offers, isSaving, isDeleting, id} = point;
+  const {basePrice, type, destination, offers, isSaving, isDeleting, id, dateFrom, dateTo} = point;
   const typeOffer = typeOffers ? typeOffers.offers.find((item) => item.type === type) : '';
   const currentDestination = destinations ? destinations.find((dest) => dest.id === destination) : '';
   const checkedOffers = typeOffer.offers ? typeOffer.offers.filter((offer) => offers.includes(offer.id)) : '';
@@ -66,10 +67,10 @@ function createPointEditView(state, destinations, typeOffers) {
 
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-1">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 12:25">
+      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizePointDueDate(dateFrom)}">
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 13:35">
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizePointDueDate(dateTo)}">
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -235,10 +236,11 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   #priceChangeHandler = (evt) => {
-    this.updateElement({
+    const updatedPrice = Number(evt.target.value);
+    this._setState({
       point: {
         ...this._state.point,
-        basePrice: Number(evt.target.value),
+        basePrice: updatedPrice,
       },
     });
   };

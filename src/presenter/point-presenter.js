@@ -123,7 +123,7 @@ export default class PointPresenter {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
-      point
+      {...point, dateFrom: this.#editPointComponent._state.point.dateFrom, dateTo: this.#editPointComponent._state.point.dateTo}
     );
   };
 
@@ -149,22 +149,5 @@ export default class PointPresenter {
       });
     }
   }
-
-  // setAborting() {
-  //   if (this.#mode === Mode.DEFAULT) {
-  //     this.#pointComponent.shake();
-  //     return;
-  //   }
-
-  //   const resetFormState = () => {
-  //     this.#editPointComponent.updateElement({
-  //       // isDisabled: false,
-  //       isSaving: false,
-  //       isDeleting: false,
-  //     });
-  //   };
-
-  //   this.#editPointComponent.shake(resetFormState);
-  // }
 
 }

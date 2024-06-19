@@ -20,7 +20,7 @@ function createPointTemplate(point, destinations, typeOffers) {
   return `
   <li class="trip-events__item">
   <div class="event">
-    <time class="event__date" datetime="2019-03-18">${humanizePointDueDate(dateFrom)}</time>
+    <time class="event__date" datetime="${humanizePointDueDate(dateFrom)}">${humanizePointDueDate(dateFrom)}</time>
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
@@ -29,11 +29,11 @@ function createPointTemplate(point, destinations, typeOffers) {
       <p class="event__time">
         <time
           class="event__start-time"
-          datetime="${dateFrom}">${humanizePointDueTime(dateFrom)}</time>
+          datetime="${humanizePointDueDate(dateFrom)}">${humanizePointDueTime(dateFrom)}</time>
         &mdash;
         <time
           class="event__end-time"
-          datetime="${dateTo}">${humanizePointDueTime(dateTo)}</time>
+          datetime="${humanizePointDueDate(dateTo)}">${humanizePointDueTime(dateTo)}</time>
       </p>
       <p class="event__duration">${diffDays !== 0 ? `${diffDays}D` : ''} ${diffHours}H ${diffMin}M</p>
     </div>
