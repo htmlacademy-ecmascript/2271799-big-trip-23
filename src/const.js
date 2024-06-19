@@ -1,11 +1,6 @@
 const CITIES = ['Chamonix', 'New York', 'Samara'];
 const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const TimeLimit = {
-  LOWER_LIMIT: 350,
-  UPPER_LIMIT: 1000,
-};
-
 const BLANK_POINT = {
   basePrice: '0',
   dateFrom: null,
@@ -14,6 +9,11 @@ const BLANK_POINT = {
   isFavorite: false,
   offers: [],
   type: 'flight',
+};
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
 };
 
 const FilterType = {

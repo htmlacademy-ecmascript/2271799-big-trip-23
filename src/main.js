@@ -3,8 +3,9 @@ import PointModel from './model/point-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import NewPointButton from './view/new-point-button.js';
-import { render } from './framework/render.js';
+import { RenderPosition, render } from './framework/render.js';
 import PointsApiService from './points-api-service.js';
+import TripDetails from './view/trip-details.js';
 
 const AUTHORIZATION = 'Basic hS2sf044wcl3sa44fgt4j';
 const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';
@@ -43,6 +44,7 @@ function handleNewPointFormClose() {
   newPointButtonComponent.element.disabled = false;
 }
 
+render(new TripDetails(), headerElement, RenderPosition.AFTERBEGIN);
 filterPresenter.init();
 
 async function init() {

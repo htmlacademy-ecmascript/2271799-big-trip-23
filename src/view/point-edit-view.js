@@ -206,6 +206,7 @@ export default class PointEditView extends AbstractStatefulView {
       point: {
         ...this._state.point,
         type: newType,
+        offers: []
       },
     });
     this.updateElement(this._state);

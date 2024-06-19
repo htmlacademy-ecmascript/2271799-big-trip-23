@@ -12,9 +12,10 @@ function createPointTemplate(point, destinations, typeOffers) {
   const startDate = dayjs(dateFrom);
   const endDate = dayjs(dateTo);
   const diff = endDate.diff(startDate);
-  const diffHours = Math.floor(diff / (1000 * 60 * 60));
+
+  const diffHours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const diffMin = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const diffDays = Math.ceil(diffHours / 24);
+  const diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
 
   return `
   <li class="trip-events__item">
@@ -34,7 +35,7 @@ function createPointTemplate(point, destinations, typeOffers) {
           class="event__end-time"
           datetime="${dateTo}">${humanizePointDueTime(dateTo)}</time>
       </p>
-      <p class="event__duration">${diffDays}D ${diffHours}H ${diffMin}M</p>
+      <p class="event__duration">${diffDays !== 0 ? `${diffDays}D` : ''} ${diffHours}H ${diffMin}M</p>
     </div>
     <p class="event__price">
       &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

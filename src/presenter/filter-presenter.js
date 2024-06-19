@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render';
-import { UpdateType } from '../const';
+import { FilterType, UpdateType } from '../const';
 import { filter } from '../utils/filter';
 import FilterListView from '../view/filter-list-view';
 
@@ -7,7 +7,7 @@ export default class FilterPresenter {
   #filterContainer = null;
   #filterModel = null;
   #pointsModel = null;
-  #currentFilter = null;
+  #currentFilter = FilterType.EVERYTHING;
   #filterComponent = null;
 
   constructor ({filterContainer, filterModel, pointsModel}) {
@@ -57,7 +57,9 @@ export default class FilterPresenter {
     if (this.#filterModel.filter === typeFilter) {
       return;
     }
+    this.#currentFilter = typeFilter;
 
     this.#filterModel.set(UpdateType.MAJOR, typeFilter);
+    this.init();
   };
 }
