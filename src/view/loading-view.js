@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 
 function createNoPointTemplate() {
   return (
-    `<p class="board__no-point">
+    `<p class="board__no-point trip-events__msg">
       Loading...
     </p>`
   );

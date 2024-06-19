@@ -46,10 +46,10 @@ function handleNewPointFormClose() {
 filterPresenter.init();
 
 async function init() {
+  presenter.init();
   await pointModel.init().finally(() => {
     render(newPointButtonComponent, headerElement);
   });
-  presenter.init();
 }
 
 init();

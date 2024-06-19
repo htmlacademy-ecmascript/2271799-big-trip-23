@@ -98,31 +98,6 @@ export default class Presenter {
     this.#uiBlocker.unblock();
   };
 
-  #handleModelEvent = (updateType, data) => {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        this.#pointPresenters.get(data.id).init(data);
-        break;
-      case UpdateType.MINOR:
-        this.#pointPresenters.forEach((presenter) => presenter.destroy());
-        this.#pointPresenters.clear();
-
-        remove(this.#sortComponent);
-        remove(this.#noPointComponent);
-        this.#renderBoard();
-        break;
-      case UpdateType.MAJOR:
-        this.#clearPointList();
-        this.#renderBoard();
-        break;
-      case UpdateType.INIT:
-        this.#isLoading = false;
-        remove(this.#noPointComponent);
-        this.#renderBoard();
-        break;
-    }
-  };
-
   init() {
     this.#renderBoard();
   }
@@ -196,6 +171,7 @@ export default class Presenter {
 
   #renderBoard() {
     this.#clearPointList();
+
     if (this.#isLoading) {
       this.#renderLoading();
       return;
@@ -212,4 +188,29 @@ export default class Presenter {
     this.#renderSort();
     render(this.#pointListComponent, this.#container);
   }
+
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#pointPresenters.forEach((presenter) => presenter.destroy());
+        this.#pointPresenters.clear();
+
+        remove(this.#sortComponent);
+        remove(this.#noPointComponent);
+        this.#renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearPointList();
+        this.#renderBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#noPointComponent);
+        this.#renderBoard();
+        break;
+    }
+  };
 }
