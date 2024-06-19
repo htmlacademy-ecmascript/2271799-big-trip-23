@@ -261,22 +261,25 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   #setDatepickers = () => {
+    const dateFromElement = this.element.querySelector('#event-start-time-1');
+    const dateToElement = this.element.querySelector('#event-end-time-1');
+
     this.#datepickerFrom = flatpickr(
-      this.element.querySelector('#event-start-time-1'),
+      dateFromElement,
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.dateFrom,
+        defaultDate: this._state.point.dateFrom,
         onChange: this.#dateFromChangeHandler,
       },
     );
 
     this.#datepickerTo = flatpickr(
-      this.element.querySelector('#event-end-time-1'),
+      dateToElement,
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.dateTo,
+        defaultDate: this._state.point.dateTo,
         onChange: this.#dateToChangeHandler,
       },
     );
