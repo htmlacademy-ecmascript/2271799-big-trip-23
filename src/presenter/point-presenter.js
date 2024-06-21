@@ -17,8 +17,6 @@ export default class PointPresenter {
 
   #mode = Mode.DEFAULT;
 
-  #pointModel = null;
-
   constructor({pointListContainer, onDataChange, onModeChange}) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
@@ -128,6 +126,7 @@ export default class PointPresenter {
   };
 
   #handleCancelEdit = () => {
+    this.#editPointComponent.reset(this.#point);
     this.#replaceFormToPoint();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
