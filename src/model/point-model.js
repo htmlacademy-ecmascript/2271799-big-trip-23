@@ -27,14 +27,15 @@ export default class PointModel extends Observable {
 
   async init() {
     try {
-      const points = await this.#pointsApiService.points;
+      // const points = await this.#pointsApiService.points;
       this.#offers = await this.#pointsApiService.offers;
       this.#destinations = await this.#pointsApiService.destinations;
-      this.#points = points.map(this.#adaptToClient);
+      this.#points = [];
     } catch(err) {
       this.#points = [];
       this.#offers = [];
       this.#destinations = [];
+      this._notify(UpdateType.ERROR, 'Failed to load latest route information');
     }
 
     this._notify(UpdateType.INIT);

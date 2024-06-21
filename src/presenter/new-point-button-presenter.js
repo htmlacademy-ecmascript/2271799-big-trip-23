@@ -6,7 +6,6 @@ export default class NewPointPresenter {
   #pointListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
-  #onDeleteClick = null;
   #pointEditComponent = null;
   #point = BLANK_POINT;
   #pointsModel = null;

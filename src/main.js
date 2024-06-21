@@ -31,6 +31,7 @@ const presenter = new Presenter({
   pointModel,
   filterModel,
   onNewPointDestroy: handleNewPointFormClose,
+  newButtonDisable: makeNewButtonDisable
 });
 
 const newPointButtonComponent = new NewPointButton({
@@ -45,6 +46,10 @@ function handleNewPointButtonClick() {
 
 function handleNewPointFormClose() {
   newPointButtonComponent.element.disabled = false;
+}
+
+function makeNewButtonDisable() {
+  newPointButtonComponent.element.disabled = true;
 }
 
 render(new TripDetails(), headerElement, RenderPosition.AFTERBEGIN);
