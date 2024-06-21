@@ -10,12 +10,14 @@ export default class NewPointPresenter {
   #pointEditComponent = null;
   #point = BLANK_POINT;
   #pointsModel = null;
+  #ableNewPointButton = null;
 
-  constructor ({pointListContainer, onDataChange, onDestroy, pointsModel}) {
+  constructor ({pointListContainer, onDataChange, onDestroy, pointsModel, ableNewPointButton}) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
     this.#pointsModel = pointsModel;
+    this.#ableNewPointButton = ableNewPointButton;
   }
 
   init() {
@@ -66,6 +68,7 @@ export default class NewPointPresenter {
       UpdateType.MAJOR,
       point,
     );
+    this.#ableNewPointButton();
   };
 
   #handleDeleteClick = () => {

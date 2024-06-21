@@ -6,6 +6,7 @@ import NewPointButton from './view/new-point-button.js';
 import { RenderPosition, render } from './framework/render.js';
 import PointsApiService from './points-api-service.js';
 import TripDetails from './view/trip-details.js';
+import { FilterType } from './const.js';
 
 const AUTHORIZATION = 'Basic hS2sf044wcl3sa44fgt4j';
 const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';
@@ -22,6 +23,7 @@ const filterPresenter = new FilterPresenter({
   filterContainer: filterElement,
   filterModel,
   pointsModel: pointModel,
+  ableNewPointButton: handleNewPointFormClose,
 });
 
 const presenter = new Presenter({
@@ -36,6 +38,7 @@ const newPointButtonComponent = new NewPointButton({
 });
 
 function handleNewPointButtonClick() {
+  filterModel.set('updateType', FilterType.EVERYTHING);
   presenter.createPoint();
   newPointButtonComponent.element.disabled = true;
 }

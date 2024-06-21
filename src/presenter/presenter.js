@@ -15,6 +15,7 @@ export default class Presenter {
   #pointListComponent = new PointListView();
   #sortComponent = null;
   #noPointComponent = null;
+  #ableNewPointButton = null;
 
   #container = null;
   #filterModel = null;
@@ -38,12 +39,14 @@ export default class Presenter {
     this.#container = container;
     this.#points = pointModel;
     this.#filterModel = filterModel;
+    this.#ableNewPointButton = onNewPointDestroy;
 
     this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#pointListComponent,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy,
-      pointsModel: this.#points
+      pointsModel: this.#points,
+      ableNewPointButton: onNewPointDestroy
     });
 
     this.#points.addObserver(this.#handleModelEvent);
@@ -104,6 +107,7 @@ export default class Presenter {
 
   createPoint() {
     this.#activeSortButton = SortType.ALL;
+    this.#filterType = FilterType.EVERYTHING;
     this.#filterModel.set(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
   }
@@ -125,6 +129,7 @@ export default class Presenter {
     if (this.#activeSortButton === sortType) {
       return;
     }
+    this.#ableNewPointButton();
     this.#activeSortButton = sortType;
     this.#renderSort();
     this.#clearPointList();
@@ -159,6 +164,7 @@ export default class Presenter {
       filterType: this.#filterType
     });
     render(this.#noPointComponent, this.#container);
+    remove(this.#sortComponent);
   }
 
   #clearPointList() {
@@ -176,7 +182,7 @@ export default class Presenter {
       this.#renderLoading();
       return;
     }
-
+    this.#renderSort();
     if(this.points.length === 0) {
       this.#renderNoPoint();
     } else {
@@ -185,7 +191,6 @@ export default class Presenter {
       });
     }
 
-    this.#renderSort();
     render(this.#pointListComponent, this.#container);
   }
 
