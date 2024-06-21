@@ -2,6 +2,10 @@ import dayjs from 'dayjs';
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizePointDueDate, humanizePointDueTime } from '../utils/point.js';
 
+function padZero(number) {
+  return number < 10 ? `0${number}` : number;
+}
+
 function createPointTemplate(point, destinations, typeOffers) {
   const {isFavorite, basePrice, type, destination, dateFrom, dateTo, offers} = point;
 
@@ -35,7 +39,7 @@ function createPointTemplate(point, destinations, typeOffers) {
           class="event__end-time"
           datetime="${humanizePointDueDate(dateTo)}">${humanizePointDueTime(dateTo)}</time>
       </p>
-      <p class="event__duration">${diffDays !== 0 ? `${diffDays}D` : ''} ${diffHours}H ${diffMin}M</p>
+      <p class="event__duration">${padZero(diffDays) !== '00' ? `${padZero(diffDays)}D` : ''} ${padZero(diffHours) === '00' && padZero(diffDays) === '00' ? '' : `${padZero(diffHours)}H`} ${padZero(diffMin)}M</p>
     </div>
     <p class="event__price">
       &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
