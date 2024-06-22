@@ -137,7 +137,6 @@ export default class PointPresenter {
   setSaving() {
     if (this.#mode === Mode.EDITING) {
       this.#editPointComponent.updateElement({
-        // isDisabled: true,
         isSaving: true,
       });
     }
@@ -157,6 +156,11 @@ export default class PointPresenter {
       this.#pointComponent.shake();
       return;
     }
-    this.#editPointComponent.shake();
+    if (this.#mode === Mode.EDITING) {
+      this.#editPointComponent.updateElement({
+        isSaving: false,
+      });
+      this.#editPointComponent.shake();
+    }
   }
 }
