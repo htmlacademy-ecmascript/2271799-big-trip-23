@@ -51,7 +51,8 @@ export default class Presenter {
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy,
       pointsModel: this.#points,
-      ableNewPointButton: onNewPointDestroy
+      ableNewPointButton: onNewPointDestroy,
+      renderNoPointText: this.#renderNoPointText
     });
 
     this.#points.addObserver(this.#handleModelEvent);
@@ -115,6 +116,10 @@ export default class Presenter {
     this.#filterType = FilterType.EVERYTHING;
     this.#filterModel.set(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
+  }
+
+  removeNoPointText() {
+    remove(this.#noPointComponent);
   }
 
   #renderSort() {
@@ -184,6 +189,10 @@ export default class Presenter {
     remove(this.#noPointComponent);
     remove(this.#errorComponent);
   }
+
+  #renderNoPointText = () => {
+    this.#renderBoard();
+  };
 
   #renderBoard() {
     this.#clearPointList();

@@ -42,6 +42,7 @@ function handleNewPointButtonClick() {
   filterModel.set('updateType', FilterType.EVERYTHING);
   presenter.createPoint();
   newPointButtonComponent.element.disabled = true;
+  presenter.removeNoPointText();
 }
 
 function handleNewPointFormClose() {
