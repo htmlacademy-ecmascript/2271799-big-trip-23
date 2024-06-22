@@ -17,8 +17,6 @@ export default class PointPresenter {
 
   #mode = Mode.DEFAULT;
 
-  #pointModel = null;
-
   constructor({pointListContainer, onDataChange, onModeChange}) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
@@ -70,16 +68,19 @@ export default class PointPresenter {
   destroy() {
     remove(this.#pointComponent);
     remove(this.#editPointComponent);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
   resetView() {
     if(this.#mode !== Mode.DEFAULT) {
       this.#editPointComponent.reset(this.#point);
       this.#replaceFormToPoint();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
   }
 
   #handleDeleteClick = (point) => {
+    this.setDeleting();
     this.#handleDataChange(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
@@ -123,11 +124,12 @@ export default class PointPresenter {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
-      {...point, dateFrom: this.#editPointComponent._state.point.dateFrom, dateTo: this.#editPointComponent._state.point.dateTo}
+      {...point, dateFrom: this.#editPointComponent._state.dateFrom, dateTo: this.#editPointComponent._state.dateTo}
     );
   };
 
   #handleCancelEdit = () => {
+    this.#editPointComponent.reset(this.#point);
     this.#replaceFormToPoint();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
@@ -135,7 +137,7 @@ export default class PointPresenter {
   setSaving() {
     if (this.#mode === Mode.EDITING) {
       this.#editPointComponent.updateElement({
-        isDisabled: true,
+        // isDisabled: true,
         isSaving: true,
       });
     }
@@ -151,6 +153,10 @@ export default class PointPresenter {
   }
 
   setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointComponent.shake();
+      return;
+    }
     this.#editPointComponent.shake();
   }
 }

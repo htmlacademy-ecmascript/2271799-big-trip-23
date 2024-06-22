@@ -1,4 +1,4 @@
-import {render, remove, RenderPosition} from '../framework/render.js';
+import { render, remove, RenderPosition } from '../framework/render.js';
 import PointListView from '../view/point-list-view.js';
 import SortListView from '../view/sort-list-view.js';
 import NoPointView from '../view/no-point-view.js';
@@ -6,15 +6,19 @@ import PointPresenter from './point-presenter.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/sort.js';
 import { FilterType, SortType, TimeLimit, UpdateType, UserAction } from '../const.js';
 import { filter } from '../utils/filter.js';
-import NewPointPresenter from './new-point-button-presenter.js';
+import NewPointPresenter from './new-point-presenter.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+import FailedMsgView from '../view/failed-msg-view.js';
 
 export default class Presenter {
   #loadingComponent = new LoadingView();
+  #errorComponent = new FailedMsgView();
   #pointListComponent = new PointListView();
   #sortComponent = null;
   #noPointComponent = null;
+  #ableNewPointButton = null;
+  #newButtonDisable = null;
 
   #container = null;
   #filterModel = null;
@@ -33,17 +37,22 @@ export default class Presenter {
   #newPointPresenter = null;
 
   #isLoading = true;
+  #isError = false;
 
-  constructor({container, pointModel, filterModel, onNewPointDestroy}) {
+  constructor({ container, pointModel, filterModel, onNewPointDestroy, newButtonDisable }) {
     this.#container = container;
     this.#points = pointModel;
     this.#filterModel = filterModel;
+    this.#ableNewPointButton = onNewPointDestroy;
+    this.#newButtonDisable = newButtonDisable;
 
     this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#pointListComponent,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy,
-      pointsModel: this.#points
+      pointsModel: this.#points,
+      ableNewPointButton: onNewPointDestroy,
+      renderNoPointText: this.#renderNoPointText
     });
 
     this.#points.addObserver(this.#handleModelEvent);
@@ -74,7 +83,7 @@ export default class Presenter {
         this.#pointPresenters.get(update.id).setSaving();
         try {
           await this.#points.updatePoint(updateType, update);
-        } catch(err) {
+        } catch (err) {
           this.#pointPresenters.get(update.id).setAborting();
         }
         break;
@@ -82,7 +91,7 @@ export default class Presenter {
         this.#newPointPresenter.setSaving();
         try {
           await this.#points.addPoint(updateType, update);
-        } catch(err) {
+        } catch (err) {
           this.#newPointPresenter.setAborting();
         }
         break;
@@ -90,7 +99,7 @@ export default class Presenter {
         this.#pointPresenters.get(update.id).setDeleting();
         try {
           await this.#points.deletePoint(updateType, update);
-        } catch(err) {
+        } catch (err) {
           this.#pointPresenters.get(update.id);
         }
         break;
@@ -104,8 +113,13 @@ export default class Presenter {
 
   createPoint() {
     this.#activeSortButton = SortType.ALL;
+    this.#filterType = FilterType.EVERYTHING;
     this.#filterModel.set(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
+  }
+
+  removeNoPointText() {
+    remove(this.#noPointComponent);
   }
 
   #renderSort() {
@@ -125,6 +139,7 @@ export default class Presenter {
     if (this.#activeSortButton === sortType) {
       return;
     }
+    this.#ableNewPointButton();
     this.#activeSortButton = sortType;
     this.#renderSort();
     this.#clearPointList();
@@ -154,11 +169,16 @@ export default class Presenter {
     render(this.#loadingComponent, this.#container, RenderPosition.AFTERBEGIN);
   }
 
+  #renderError() {
+    render(this.#errorComponent, this.#container, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoPoint() {
     this.#noPointComponent = new NoPointView({
       filterType: this.#filterType
     });
     render(this.#noPointComponent, this.#container);
+    remove(this.#sortComponent);
   }
 
   #clearPointList() {
@@ -167,7 +187,12 @@ export default class Presenter {
     this.#pointListComponent.element.innerHTML = '';
     remove(this.#loadingComponent);
     remove(this.#noPointComponent);
+    remove(this.#errorComponent);
   }
+
+  #renderNoPointText = () => {
+    this.#renderBoard();
+  };
 
   #renderBoard() {
     this.#clearPointList();
@@ -177,7 +202,14 @@ export default class Presenter {
       return;
     }
 
-    if(this.points.length === 0) {
+    if (this.#isError) {
+      this.#renderError();
+      return;
+    }
+
+    this.#renderSort();
+
+    if (this.points.length === 0) {
       this.#renderNoPoint();
     } else {
       this.points.forEach((point) => {
@@ -185,7 +217,6 @@ export default class Presenter {
       });
     }
 
-    this.#renderSort();
     render(this.#pointListComponent, this.#container);
   }
 
@@ -210,6 +241,12 @@ export default class Presenter {
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#noPointComponent);
+        this.#renderBoard();
+        break;
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        this.#newButtonDisable();
+        this.#isError = true;
         this.#renderBoard();
         break;
     }

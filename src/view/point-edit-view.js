@@ -4,6 +4,7 @@ import { capitalizeFirstLetter } from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { humanizePointDueDate } from '../utils/point.js';
+import { BLANK_POINT } from '../const.js';
 
 const setButtonName = (id, isDeleting) => {
   if (!id) {
@@ -13,8 +14,7 @@ const setButtonName = (id, isDeleting) => {
 };
 
 function createPointEditView(state, destinations, typeOffers) {
-  const {point} = state;
-  const {basePrice, type, destination, offers, isSaving, isDeleting, id, dateFrom, dateTo} = point;
+  const {basePrice, type, destination, offers, isSaving, isDeleting, id, dateFrom, dateTo} = state;
   const typeOffer = typeOffers ? typeOffers.offers.find((item) => item.type === type) : '';
   const currentDestination = destinations ? destinations.find((dest) => dest.id === destination) : '';
   const checkedOffers = typeOffer.offers ? typeOffer.offers.filter((offer) => offers.includes(offer.id)) : '';
@@ -142,10 +142,9 @@ export default class PointEditView extends AbstractStatefulView {
   #datepickerTo = null;
 
 
-  constructor({point, destinations, typeOffers, onFormSubmit, onPointClick, onDeleteClick}) {
+  constructor({point = BLANK_POINT, destinations, typeOffers, onFormSubmit, onPointClick, onDeleteClick}) {
     super();
-    this._state = point;
-    this._setState(PointEditView.parsePointToState({point}));
+    this._setState(PointEditView.parsePointToState(point));
     this.#destinations = destinations;
     this.#typeOffers = typeOffers;
     this.#handleFormSubmit = onFormSubmit;
@@ -203,24 +202,17 @@ export default class PointEditView extends AbstractStatefulView {
   #typeChangeHandler = (evt) => {
     const newType = evt.target.value;
 
-    this._setState({
-      point: {
-        ...this._state.point,
-        type: newType,
-        offers: []
-      },
+    this.updateElement({
+      type: newType,
+      offers: []
     });
-    this.updateElement(this._state);
   };
 
   #destinationChangeHandler = (evt) => {
     const selectedDestination = this.#destinations.find((dest) => dest.name === evt.target.value);
     if (selectedDestination) {
       this.updateElement({
-        point: {
-          ...this._state.point,
-          destination: selectedDestination.id,
-        },
+        destination: selectedDestination.id,
       });
     }
   };
@@ -228,20 +220,14 @@ export default class PointEditView extends AbstractStatefulView {
   #offerChangeHandler = () => {
     const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
     this._setState({
-      point: {
-        ...this._state.point,
-        offers: checkedBoxes.map((element) => element.dataset.offerId)
-      }
+      offers: checkedBoxes.map((element) => element.dataset.offerId)
     });
   };
 
   #priceChangeHandler = (evt) => {
     const updatedPrice = Number(evt.target.value);
     this._setState({
-      point: {
-        ...this._state.point,
-        basePrice: updatedPrice,
-      },
+      basePrice: updatedPrice,
     });
   };
 
@@ -269,7 +255,7 @@ export default class PointEditView extends AbstractStatefulView {
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.point.dateFrom,
+        defaultDate: this._state.dateFrom,
         onChange: this.#dateFromChangeHandler,
       },
     );
@@ -279,7 +265,7 @@ export default class PointEditView extends AbstractStatefulView {
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.point.dateTo,
+        defaultDate: this._state.dateTo,
         onChange: this.#dateToChangeHandler,
       },
     );
@@ -287,22 +273,30 @@ export default class PointEditView extends AbstractStatefulView {
 
   #dateFromChangeHandler = ([userDate]) => {
     this._setState({
-      point: {
-        ...this._state.point,
-        dateFrom: userDate,
-      },
+      dateFrom: userDate
     });
   };
 
   #dateToChangeHandler = ([userDate]) => {
     this._setState({
-      point: {
-        ...this._state.point,
-        dateTo: userDate,
-      },
+      dateTo: userDate,
     });
   };
 
-  static parsePointToState = ({point}) => ({point});
-  static parseStateToPoint = (state) => state.point;
+  static parsePointToState(point) {
+    return {
+      ...point,
+      isSaving: false,
+      isDeleting: false,
+    };
+  }
+
+  static parseStateToPoint(state) {
+    const point = {...state};
+
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
+  }
 }

@@ -6,16 +6,19 @@ export default class NewPointPresenter {
   #pointListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
-  #onDeleteClick = null;
   #pointEditComponent = null;
   #point = BLANK_POINT;
   #pointsModel = null;
+  #ableNewPointButton = null;
+  #renderNoPointText = null;
 
-  constructor ({pointListContainer, onDataChange, onDestroy, pointsModel}) {
+  constructor ({pointListContainer, onDataChange, onDestroy, pointsModel, ableNewPointButton, renderNoPointText}) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
     this.#pointsModel = pointsModel;
+    this.#ableNewPointButton = ableNewPointButton;
+    this.#renderNoPointText = renderNoPointText;
   }
 
   init() {
@@ -33,6 +36,7 @@ export default class NewPointPresenter {
   }
 
   #handleCancelClick = () => {
+    this.#renderNoPointText();
     this.destroy();
   };
 
@@ -46,7 +50,7 @@ export default class NewPointPresenter {
     remove(this.#pointEditComponent);
     this.#pointEditComponent = null;
 
-    document.querySelector('keydown', this.#escKeyDownHandler);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
   setSaving() {
@@ -66,9 +70,11 @@ export default class NewPointPresenter {
       UpdateType.MAJOR,
       point,
     );
+    this.#ableNewPointButton();
   };
 
   #handleDeleteClick = () => {
+    this.#renderNoPointText();
     this.destroy();
   };
 
@@ -76,6 +82,7 @@ export default class NewPointPresenter {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();
+      this.#renderNoPointText();
     }
   };
 }
