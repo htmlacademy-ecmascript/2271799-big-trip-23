@@ -60,6 +60,12 @@ export default class NewPointPresenter {
     });
   }
 
+  setNoSaving() {
+    this.#pointEditComponent.updateElement({
+      isSaving: false,
+    });
+  }
+
   setAborting() {
     this.#pointEditComponent.shake();
   }

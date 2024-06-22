@@ -92,6 +92,7 @@ export default class Presenter {
         try {
           await this.#points.addPoint(updateType, update);
         } catch (err) {
+          this.#newPointPresenter.setNoSaving();
           this.#newPointPresenter.setAborting();
         }
         break;
