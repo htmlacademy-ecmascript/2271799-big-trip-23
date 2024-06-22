@@ -6,7 +6,7 @@ import PointPresenter from './point-presenter.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/sort.js';
 import { FilterType, SortType, TimeLimit, UpdateType, UserAction } from '../const.js';
 import { filter } from '../utils/filter.js';
-import NewPointPresenter from './new-point-button-presenter.js';
+import NewPointPresenter from './new-point-presenter.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import FailedMsgView from '../view/failed-msg-view.js';

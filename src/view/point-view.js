@@ -13,13 +13,23 @@ function createPointTemplate(point, destinations, typeOffers) {
   const typeOffer = typeOffers ? typeOffers.find((item) => item.type === type) : null;
   const checkedOffers = typeOffer ? typeOffer.offers.filter((offer) => offers.includes(offer.id)) : null;
 
+  const MS_IN_SECOND = 1000;
+  const SECONDS_IN_MINUTE = 60;
+  const MINUTES_IN_HOUR = 60;
+  const HOURS_IN_DAY = 24;
+
+  const MS_IN_MINUTE = MS_IN_SECOND * SECONDS_IN_MINUTE;
+  const MS_IN_HOUR = MS_IN_MINUTE * MINUTES_IN_HOUR;
+  const MS_IN_DAY = MS_IN_HOUR * HOURS_IN_DAY;
+
   const startDate = dayjs(dateFrom);
   const endDate = dayjs(dateTo);
   const diff = endDate.diff(startDate);
 
-  const diffHours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const diffMin = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor(diff / MS_IN_DAY);
+  const diffHours = Math.floor((diff % MS_IN_DAY) / MS_IN_HOUR);
+  const diffMin = Math.floor((diff % MS_IN_HOUR) / MS_IN_MINUTE);
+
 
   return `
   <li class="trip-events__item">
