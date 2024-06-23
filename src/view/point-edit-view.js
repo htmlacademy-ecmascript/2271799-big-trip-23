@@ -133,6 +133,7 @@ ${currentDestination.description || currentDestination.pictures.length > 0 ? `
 export default class PointEditView extends AbstractStatefulView {
   #destinations = null;
   #typeOffers = null;
+  #initialPoint = null;
 
   #handleFormSubmit = null;
   #handlePointClick = null;
@@ -150,6 +151,7 @@ export default class PointEditView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handlePointClick = onPointClick;
     this.#handleDelete = onDeleteClick;
+    this.#initialPoint = point;
 
     this._restoreHandlers();
   }
@@ -197,6 +199,8 @@ export default class PointEditView extends AbstractStatefulView {
       .addEventListener('change', this.#priceChangeHandler);
 
     this.#setDatepickers();
+
+    document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #typeChangeHandler = (evt) => {
@@ -234,10 +238,12 @@ export default class PointEditView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(PointEditView.parseStateToPoint(this._state));
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #pointClickHandler = (evt) => {
     evt.preventDefault();
+    this._resetToInitialState();
     this.#handlePointClick();
   };
 
@@ -281,6 +287,18 @@ export default class PointEditView extends AbstractStatefulView {
     this._setState({
       dateTo: userDate,
     });
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this._resetToInitialState();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
+    }
+  };
+
+  _resetToInitialState = () => {
+    this.updateElement(PointEditView.parsePointToState(this.#initialPoint));
   };
 
   static parsePointToState(point) {

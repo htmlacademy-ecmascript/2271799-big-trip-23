@@ -145,6 +145,10 @@ export default class Presenter {
     this.#renderSort();
     this.#clearPointList();
 
+    this.#pointPresenters.forEach((presenter) => {
+      presenter.removeEscKeyHandler();
+    });
+
     this.points.forEach((point) => {
       this.#renderPoint(point, this.#points.destinations, this.#points.offers, this.#points);
     });
@@ -233,6 +237,9 @@ export default class Presenter {
         remove(this.#sortComponent);
         remove(this.#noPointComponent);
         this.#renderBoard();
+        this.#pointPresenters.forEach((presenter) => {
+          presenter.removeEscKeyHandler();
+        });
         break;
       case UpdateType.MAJOR:
         this.#clearPointList();
