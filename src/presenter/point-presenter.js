@@ -68,14 +68,14 @@ export default class PointPresenter {
   destroy() {
     remove(this.#pointComponent);
     remove(this.#editPointComponent);
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.removeEscKeyHandler();
   }
 
   resetView() {
     if(this.#mode !== Mode.DEFAULT) {
       this.#editPointComponent.reset(this.#point);
       this.#replaceFormToPoint();
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
+      this.removeEscKeyHandler();
     }
   }
 
@@ -116,6 +116,9 @@ export default class PointPresenter {
   };
 
   #handleEditClick = () => {
+    if(this.#mode !== Mode.DEFAULT) {
+      this.#editPointComponent.reset(this.#point);
+    }
     this.#replacePointToForm();
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
@@ -133,6 +136,10 @@ export default class PointPresenter {
     this.#replaceFormToPoint();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
+
+  removeEscKeyHandler() {
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+  }
 
   setSaving() {
     if (this.#mode === Mode.EDITING) {
